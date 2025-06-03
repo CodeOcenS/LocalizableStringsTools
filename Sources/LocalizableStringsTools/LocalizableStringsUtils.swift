@@ -64,6 +64,9 @@ public extension LocalizableStringsUtils {
             
         }
     }
+}
+
+public extension LocalizableStringsUtils {
     /// 替换特殊字符
     ///
     /// - 全角处理为半角：%、@、{、}
