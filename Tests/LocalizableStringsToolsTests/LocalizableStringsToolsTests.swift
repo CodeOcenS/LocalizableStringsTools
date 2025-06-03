@@ -78,3 +78,22 @@ import Testing
     let result = LocalizableStringsParser.parse(string: input, locale: "en")
     #expect(result.localizableStrings == expectedOutput)
 }
+
+/// replaceSpecial方法测试
+@Test func testReplaceSpecial() async throws {
+    // 测试全角符号替换
+    let test1 = LocalizableStringsUtils.replaceSpecial("％＠｛｝")
+    #expect(test1 == "%@{}")
+    
+    // 测试%s替换为%@
+    let test2 = LocalizableStringsUtils.replaceSpecial("%s")
+    #expect(test2 == "%@")
+    
+    // 测试引号转义
+    let test3 = LocalizableStringsUtils.replaceSpecial("\"value\"")
+    #expect(test3 == "\\\"value\\\"")
+    
+    // 测试混合情况
+    let test4 = LocalizableStringsUtils.replaceSpecial("％s\"value\"")
+    #expect(test4 == "%@\\\"value\\\"")
+}
