@@ -64,4 +64,25 @@ public extension LocalizableStringsUtils {
             
         }
     }
+    /// 替换特殊字符
+    ///
+    /// - 全角处理为半角：%、@、{、}
+    /// - %s 替换为 %@
+    /// - 处理value 中有引号问题
+    static func replaceSpecial(_ text: String) -> String {
+        var result: String = text
+        // 将全角符号替换为半角
+        result = result.replacingOccurrences(of: "％", with: "%")
+        result = result.replacingOccurrences(of: "＠", with: "@")
+        result = result.replacingOccurrences(of: "｛", with: "{")
+        result = result.replacingOccurrences(of: "｝", with: "}")
+        // %s 替换为 %@
+        result = result.replacingOccurrences(of: "%s", with: "%@")
+        // 处理value 中有引号问题
+        guard let regularExpression = try? NSRegularExpression(pattern: #"(?<!\\)""#) else {
+            return result
+        }
+        result = regularExpression.stringByReplacingMatches(in: result, range: NSRange(location: 0, length: result.count), withTemplate: #"\\\""#)
+        return result
+    }
 }
