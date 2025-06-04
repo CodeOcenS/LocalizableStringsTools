@@ -88,4 +88,29 @@ public extension LocalizableStringsUtils {
         result = regularExpression.stringByReplacingMatches(in: result, range: NSRange(location: 0, length: result.count), withTemplate: #"\\\""#)
         return result
     }
+    /// 检查给定字符串包含的占位符（["%@", "%d", "%ld", "{\d}"]）个数，
+    /// 返回值：(占位符{\d}是否合法(是否从0连续开始)，占位符个数)
+    static func checkPlaceholderCount(string: String) -> (Bool, Int) {
+        // 1. 匹配 %@、%d、%ld
+        let pattern1 = "%@|%d|%ld"
+        let regex1 = try! NSRegularExpression(pattern: pattern1)
+        let count1 = regex1.numberOfMatches(in: string, range: NSRange(string.startIndex..., in: string))
+        
+        // 2. 匹配 {数字}
+        let pattern2 = "\\{(\\d)\\}"
+        let regex2 = try! NSRegularExpression(pattern: pattern2)
+        let matches2 = regex2.matches(in: string, range: NSRange(string.startIndex..., in: string))
+        let indices = matches2.compactMap {
+            Range($0.range(at: 1), in: string).flatMap { Int(String(string[$0])) }
+        }.sorted()
+        
+        // 检查是否从0开始连续
+        var isValid = true
+        if !indices.isEmpty {
+            isValid = indices == Array(0..<indices.count)
+        }
+        
+        let count = count1 + indices.count
+        return (isValid, count)
+    }
 }

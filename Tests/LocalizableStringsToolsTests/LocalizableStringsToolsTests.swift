@@ -96,4 +96,64 @@ import Testing
     // 测试混合情况
     let test4 = LocalizableStringsUtils.replaceSpecial("％s\"value\"")
     #expect(test4 == "%@\\\"value\\\"")
+    
+    // 阿拉伯语。引文
+    let giveText5 = #"ملحوظة:\nعند الاستخدام مع مفتاح الستارة الدوارة، تأكد من أن تسميات "لأعلى" و"لأسفل" موضوعة بشكل صحيح."#
+    let expectedText5 = #"ملحوظة:\nعند الاستخدام مع مفتاح الستارة الدوارة، تأكد من أن تسميات \"لأعلى\" و\"لأسفل\" موضوعة بشكل صحيح."#
+    let test5 = LocalizableStringsUtils.replaceSpecial(giveText5)
+    #expect(test5 == expectedText5)
+}
+
+/// 没有占位符
+@Test func noPlaceholders() async throws {
+    let (isValid, count) = LocalizableStringsUtils.checkPlaceholderCount(string: "Hello World")
+    #expect(isValid == true)
+    #expect(count == 0)
+}
+
+/// 简单%占位符
+@Test func simplePercentPlaceholders() async throws {
+    let (isValid, count) = LocalizableStringsUtils.checkPlaceholderCount(string: "Value: %@, Number: %d, Long: %ld")
+    #expect(isValid == true)
+    #expect(count == 3)
+}
+
+/// {\d}占位符
+@Test func bracesPlaceholdersValid() async throws {
+    let (isValid, count) = LocalizableStringsUtils.checkPlaceholderCount(string: "A {0} B {1} C {2}")
+    #expect(isValid == true)
+    #expect(count == 3)
+}
+/// 非法{\d}占位符
+@Test func bracesPlaceholdersInvalid() async throws {
+    let (isValid, count) = LocalizableStringsUtils.checkPlaceholderCount(string: "A {0} B {1} ddd {1} C {2}")
+    #expect(isValid == false)
+    #expect(count == 4)
+}
+/// 非法占位符
+@Test func bracesPlaceholdersInvalid1() async throws {
+    let (isValid, count) = LocalizableStringsUtils.checkPlaceholderCount(string: "A {0} B {2}")
+    #expect(isValid == false)
+    #expect(count == 2)
+}
+
+/// Mixed placeholders
+@Test func mixedPlaceholders() async throws {
+    let (isValid, count) = LocalizableStringsUtils.checkPlaceholderCount(string: "A %@ B {0} C %d D {1}")
+    #expect(isValid == true)
+    #expect(count == 4)
+}
+
+/// 重复的占位符
+@Test func duplicatePercentPlaceholders() async throws {
+    let (isValid, count) = LocalizableStringsUtils.checkPlaceholderCount(string: "%@ %@ %d %ld")
+    #expect(isValid == true)
+    #expect(count == 4)
+}
+
+/// 没有从1开始的占位符
+@Test func bracesPlaceholdersNonZeroStart() async throws {
+    let (isValid, count) = LocalizableStringsUtils.checkPlaceholderCount(string: "A {1} B {2}")
+    #expect(isValid == false)
+    #expect(count == 2)
 }
