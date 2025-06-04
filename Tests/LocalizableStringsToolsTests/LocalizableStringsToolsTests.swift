@@ -78,7 +78,7 @@ import Testing
     let result = LocalizableStringsParser.parse(string: input, locale: "en")
     #expect(result.localizableStrings == expectedOutput)
 }
-
+// mark: 占位符
 /// replaceSpecial方法测试
 @Test func testReplaceSpecial() async throws {
     // 测试全角符号替换

@@ -8,7 +8,7 @@
 import Foundation
 public struct LocalizableStringsAvailableCheck {
     /// 是否为 Excel 中的特殊错误值
-    /// - Returns: (是否为特殊错误值, 错误值)
+    /// - Returns: 是否为特殊错误值
     ///
     ///| 错误码  | 含义                | 典型原因示例                     |
     ///| ------- | ------------------- | -------------------------------- |
@@ -22,22 +22,22 @@ public struct LocalizableStringsAvailableCheck {
     ///| #SPILL! | 溢出错误（新Excel） | 动态数组公式溢出                 |
     ///| #CALC!  | 计算错误（新Excel） | 公式逻辑无法计算                 |
    
-    static func isSpecialExcelErrorValue(cellValue:String) -> (Bool, String) {
+    public static func isSpecialExcelErrorValue(cellValue:String) -> Bool {
         guard !cellValue.isEmpty else {
-            return (false, cellValue);
+            return false;
         }
         // Define Excel error codes
-            let errorCodes = [
-                "#DIV/0!",
-                "#N/A",
-                "#VALUE!",
-                "#REF!",
-                "#NAME?",
-                "#NUM!",
-                "#NULL!",
-                "#SPILL!",
-                "#CALC!"
-            ]
-        return errorCodes.contains(cellValue.trimmingCharacters(in: .whitespaces)) ? (true, cellValue) : (false, cellValue)
+        let errorCodes = [
+            "#DIV/0!",
+            "#N/A",
+            "#VALUE!",
+            "#REF!",
+            "#NAME?",
+            "#NUM!",
+            "#NULL!",
+            "#SPILL!",
+            "#CALC!"
+        ]
+        return errorCodes.contains(cellValue.trimmingCharacters(in: .whitespacesAndNewlines))
     }
 }
